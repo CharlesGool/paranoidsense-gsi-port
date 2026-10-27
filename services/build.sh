@@ -15,7 +15,7 @@
 #   3. d8 成一个 dex, 作为 services.jar 里的 classes4.dex
 #   4. apktool 反编译 services.jar, 跑 apply_hooks.py(3 处 Sense 入口 + 57 处 USE_BIOMETRIC_INTERNAL 放行), 只取重新汇编的 classes.dex
 #   5. 原 jar 的其他条目原样保留(classes2/3.dex 和资源不动), zipalign
-# 注意: 只是框架部分。没有 ParanoidSense 应用(co.aospa.sense)时, 打开 ro.face.sense_service 也用不了人脸解锁。
+# 注意: 只是框架部分。没有 ParanoidSense 应用(com.android.faceunlock)时, 打开 ro.face.sense_service 也用不了人脸解锁。
 set -euo pipefail
 
 SYS=$(realpath "$1")

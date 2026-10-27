@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal">
 
-                <co.aospa.sense.view.CircleSurfaceView
+                <com.android.faceunlock.view.CircleSurfaceView
                     android:id="@+id/camera_surface"
                     android:layout_width="240.0dip"
                     android:layout_height="320.0dip"

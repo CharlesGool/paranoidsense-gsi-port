@@ -29,11 +29,11 @@ ov etc/permissions
 ov etc/sysconfig
 ov product/overlay
 
-for f in /system/priv-app/ParanoidSense/ParanoidSense.apk \
-    /system/etc/permissions/privapp_whitelist_co.aospa.sense.xml \
+for f in /system/priv-app/FaceUnlock/FaceUnlock.apk \
+    /system/etc/permissions/privapp_whitelist_com.android.faceunlock.xml \
     /system/etc/permissions/android.hardware.biometrics.face.xml \
-    /system/etc/sysconfig/hiddenapi-whitelist-co.aospa.sense.xml \
-    /system/product/overlay/SenseSettingsOverlay.apk; do
+    /system/etc/sysconfig/hiddenapi-whitelist-com.android.faceunlock.xml \
+    /system/product/overlay/FaceUnlockSettingsOverlay.apk; do
     [ -f $f ] && echo "ok $f" >>$LOG || echo "MISSING $f" >>$LOG
 done
 sha256sum /system/framework/services.jar >>$LOG 2>&1

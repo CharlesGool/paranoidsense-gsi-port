@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 编 ParanoidSense.apk(co.aospa.sense, 自签名 priv-app)和 SenseSettingsOverlay.apk, 不用 AOSP 编译系统.
+# 编 FaceUnlock.apk(com.android.faceunlock, 自签名 priv-app)和 FaceUnlockSettingsOverlay.apk, 不用 AOSP 编译系统.
 #
 # 用法: build.sh <底包 system 目录> <输出目录>
 # 工具(环境变量, 版本同 ../services/build.sh):
@@ -18,12 +18,12 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 : "${JAVA_HOME:=/usr/lib/jvm/java-17-openjdk-amd64}" "${D2J:?}" "${R8:?}" "${APKTOOL:?}" "${BT:?}" "${KOTLIN_HOME:?}"
 UP=$HERE/../third_party/ParanoidSense
 AIDL_SRC=$HERE/../services/src/vendor
-KS=${KS:-$HERE/sense.keystore}
+KS=${KS:-$HERE/faceunlock.keystore}
 [[ -f $UP/res/raw/model_file ]] || { echo "缺上游文件, 先跑 scripts/fetch_upstream.sh" >&2; exit 1; }
 if [[ ! -f $KS ]]; then
     echo "==== 生成签名密钥 $KS"
-    "$JAVA_HOME/bin/keytool" -genkeypair -keystore "$KS" -storetype PKCS12 -alias sense -keyalg RSA -keysize 2048 \
-        -validity 10000 -storepass android -keypass android -dname "CN=ParanoidSense GSI Port"
+    "$JAVA_HOME/bin/keytool" -genkeypair -keystore "$KS" -storetype PKCS12 -alias faceunlock -keyalg RSA -keysize 2048 \
+        -validity 10000 -storepass android -keypass android -dname "CN=Face Unlock"
 fi
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 mkdir -p "$OUT" "$T"/{cp,res,gen,kt,aidl,dex,lib/lib/arm64-v8a,ores}
@@ -57,23 +57,23 @@ cp "$T/base.apk" "$T/app.apk"
 cp "$UP"/lib/lib*.so "$T/lib/lib/arm64-v8a/"
 (cd "$T/lib" && zip -q -0 -r "$T/app.apk" lib)
 "$BT/zipalign" -f -p 4 "$T/app.apk" "$T/app-aligned.apk"
-"$BT/apksigner" sign --ks "$KS" --ks-key-alias sense --ks-pass pass:android --key-pass pass:android \
-    --out "$OUT/ParanoidSense.apk" "$T/app-aligned.apk"
-"$BT/zipalign" -c -p 4 "$OUT/ParanoidSense.apk"
-python3 -I - "$OUT/ParanoidSense.apk" <<'EOF'
+"$BT/apksigner" sign --ks "$KS" --ks-key-alias faceunlock --ks-pass pass:android --key-pass pass:android \
+    --out "$OUT/FaceUnlock.apk" "$T/app-aligned.apk"
+"$BT/zipalign" -c -p 4 "$OUT/FaceUnlock.apk"
+python3 -I - "$OUT/FaceUnlock.apk" <<'EOF'
 import sys, zipfile
 bad = [i.filename for i in zipfile.ZipFile(sys.argv[1]).infolist()
        if i.filename.endswith('.so') and i.compress_type != zipfile.ZIP_STORED]
 sys.exit(f"compressed .so in APK: {bad}") if bad else print("so: stored, page-aligned")
 EOF
-APKTOOL="$APKTOOL" python3 -I "$HERE/../scripts/check_dex.py" --boot "$CP" "$OUT/ParanoidSense.apk"
+APKTOOL="$APKTOOL" python3 -I "$HERE/../scripts/check_dex.py" --boot "$CP" "$OUT/FaceUnlock.apk"
 
 echo "==== Settings overlay"
 for f in $(find "$HERE/overlay/res" -type f); do "$BT/aapt2" compile "$f" -o "$T/ores/"; done
 "$BT/aapt2" link -o "$T/overlay.apk" --manifest "$HERE/overlay/AndroidManifest.xml" \
     -I "$SYS/framework/framework-res.apk" --min-sdk-version 35 --target-sdk-version 35 "$T"/ores/*.flat
 "$BT/zipalign" -f -p 4 "$T/overlay.apk" "$T/overlay-aligned.apk"
-"$BT/apksigner" sign --ks "$KS" --ks-key-alias sense --ks-pass pass:android --key-pass pass:android \
-    --out "$OUT/SenseSettingsOverlay.apk" "$T/overlay-aligned.apk"
+"$BT/apksigner" sign --ks "$KS" --ks-key-alias faceunlock --ks-pass pass:android --key-pass pass:android \
+    --out "$OUT/FaceUnlockSettingsOverlay.apk" "$T/overlay-aligned.apk"
 
-(cd "$OUT" && sha256sum ParanoidSense.apk SenseSettingsOverlay.apk)
+(cd "$OUT" && sha256sum FaceUnlock.apk FaceUnlockSettingsOverlay.apk)

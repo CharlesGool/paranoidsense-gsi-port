@@ -24,7 +24,7 @@ public final class SenseHooks {
     private static final String TAG = "SenseHooks";
     private static final String PERM_INTERNAL = "android.permission.USE_BIOMETRIC_INTERNAL";
     private static final String PERM_MANAGE = "android.permission.MANAGE_BIOMETRIC";
-    private static final String PKG_SENSE = "co.aospa.sense";
+    private static final String PKG_SENSE = "com.android.faceunlock";
 
     private SenseHooks() {}
 
@@ -34,7 +34,7 @@ public final class SenseHooks {
      * privapp 白名单对 signature 无效。放行条件:
      *   1. 调用方是 system/root/本进程(system_server)
      *   2. 调用方真的持有 USE_BIOMETRIC_INTERNAL 或 MANAGE_BIOMETRIC
-     *   3. 调用方 uid 对应的包里有 co.aospa.sense, 并且它是系统 priv-app(FLAG_SYSTEM + isPrivilegedApp)
+     *   3. 调用方 uid 对应的包里有 com.android.faceunlock, 并且它是系统 priv-app(FLAG_SYSTEM + isPrivilegedApp)
      * 不走 Context.enforceCallingOrSelfPermission(perm, ...), 否则 PermissionChecker 还是会拒。
      */
     public static void enforceInternal() {
@@ -60,7 +60,7 @@ public final class SenseHooks {
         return isSensePrivApp(ctx, uid);
     }
 
-    /** uid 的包里有 co.aospa.sense, 并且它是系统 priv-app。system_server 查 pm 要清 identity。 */
+    /** uid 的包里有 com.android.faceunlock, 并且它是系统 priv-app。system_server 查 pm 要清 identity。 */
     private static boolean isSensePrivApp(Context ctx, int uid) {
         final PackageManager pm = ctx.getPackageManager();
         if (pm == null) return false;

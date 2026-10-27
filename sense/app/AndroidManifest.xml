@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.aospa.sense">
+    package="com.android.faceunlock">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_CAMERA"/>
@@ -41,7 +41,7 @@
             android:label="@string/app_name"
             android:permission="android.permission.MANAGE_BIOMETRIC">
             <intent-filter>
-                <action android:name="co.aospa.sense.BIND" />
+                <action android:name="com.android.faceunlock.BIND" />
             </intent-filter>
         </service>
     </application>

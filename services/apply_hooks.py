@@ -12,7 +12,7 @@
    FaceService$FaceServiceWrapper / BiometricService$BiometricServiceWrapper / AuthService$AuthServiceImpl
    里每个 `invoke-super {p0}, L.../I...Service$Stub;->foo_enforcePermission()V` 换成
    `invoke-static {}, SenseHooks;->enforceInternal()V`。底包 USE_BIOMETRIC_INTERNAL 是 signature(无 privileged),
-   自签名的 ParanoidSense 拿不到, 走 SenseHooks 按 co.aospa.sense 系统 priv-app 身份放行
+   自签名的 ParanoidSense 拿不到, 走 SenseHooks 按 com.android.faceunlock 系统 priv-app 身份放行
 3. 剩下的几处直接 USE_BIOMETRIC_INTERNAL 校验:
    FaceService$FaceServiceWrapper.addAuthenticatorsRegisteredCallback 用 Utils.checkPermission,
    AuthService.checkInternalPermission / AuthService$AuthServiceImpl.setActiveUser 用 Context.enforceCallingOrSelfPermission,

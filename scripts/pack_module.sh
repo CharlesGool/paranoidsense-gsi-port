@@ -7,10 +7,10 @@ HERE=$(cd "$(dirname "$0")/../module" && pwd)
 T=$(mktemp -d); trap 'rm -rf "$T"' EXIT
 
 cp -r "$HERE"/module.prop "$HERE"/system.prop "$HERE"/post-fs-data.sh "$HERE"/service.sh "$HERE"/system "$T/"
-mkdir -p "$T/system/framework" "$T/system/priv-app/ParanoidSense" "$T/system/product/overlay"
+mkdir -p "$T/system/framework" "$T/system/priv-app/FaceUnlock" "$T/system/product/overlay"
 cp "$SVC/services.jar" "$T/system/framework/"
-cp "$APP/ParanoidSense.apk" "$T/system/priv-app/ParanoidSense/"
-cp "$APP/SenseSettingsOverlay.apk" "$T/system/product/overlay/"
+cp "$APP/FaceUnlock.apk" "$T/system/priv-app/FaceUnlock/"
+cp "$APP/FaceUnlockSettingsOverlay.apk" "$T/system/product/overlay/"
 
 if grep -l $'\r' "$T"/*.sh "$T"/*.prop; then echo "CRLF in scripts" >&2; exit 1; fi
 rm -f "$ZIP"

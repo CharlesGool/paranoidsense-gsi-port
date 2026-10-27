@@ -103,9 +103,9 @@ public class SenseProvider implements ServiceProvider {
 
     private static final String TAG = "SenseProvider";
 
-    private static final String BIND_SENSE_ACTION = "co.aospa.sense.BIND";
-    private static final String PACKAGE_NAME = "co.aospa.sense";
-    private static final String SERVICE_NAME = "co.aospa.sense.SenseService";
+    private static final String BIND_SENSE_ACTION = "com.android.faceunlock.BIND";
+    private static final String PACKAGE_NAME = "com.android.faceunlock";
+    private static final String SERVICE_NAME = "com.android.faceunlock.SenseService";
 
     public static final int DEVICE_ID = 1008;
     private static final int ENROLL_TIMEOUT_SEC = 75;
@@ -1092,8 +1092,8 @@ public class SenseProvider implements ServiceProvider {
                     Intent intent = new Intent(BIND_SENSE_ACTION);
                     intent.setClassName(PACKAGE_NAME, SERVICE_NAME);
                     // flags = BIND_AUTO_CREATE(0x1) | BIND_FOREGROUND_SERVICE(0x40) | BIND_INCLUDE_CAPABILITIES(0x1000)
-                    // 不加 FOREGROUND 的话 co.aospa.sense 一直是后台进程, CAMERA 被 appops foreground-only 限制(录入几秒后开始拒),
-                    // CameraService 日志里报 "Access for co.aospa.sense has been restricted"。加上 INCLUDE_CAPABILITIES 把本进程(system_server,
+                    // 不加 FOREGROUND 的话 com.android.faceunlock 一直是后台进程, CAMERA 被 appops foreground-only 限制(录入几秒后开始拒),
+                    // CameraService 日志里报 "Access for com.android.faceunlock has been restricted"。加上 INCLUDE_CAPABILITIES 把本进程(system_server,
                     // 持 CAMERA capability)的 capability 传过去。
                     boolean result = mContext.bindServiceAsUser(intent, new SenseServiceConnection(userId),
                             Context.BIND_AUTO_CREATE | Context.BIND_FOREGROUND_SERVICE | Context.BIND_INCLUDE_CAPABILITIES,

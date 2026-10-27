@@ -23,13 +23,13 @@ echo "$(date) boot_completed, system_server start_count=$(getprop sys.system_ser
 # v2 这里 sleep 5 + pm grant 一次, 平板上失败了, 虽然后来 Settings 的运行时权限弹窗把 CAMERA 补上了。
 i=0
 while [ $i -lt 60 ]; do
-    pm path co.aospa.sense >/dev/null 2>&1 && break
+    pm path com.android.faceunlock >/dev/null 2>&1 && break
     sleep 1; i=$((i + 1))
 done
-echo "$(date) pm ready after ${i}s, pm path -> $(pm path co.aospa.sense 2>&1)" >>$LOG
+echo "$(date) pm ready after ${i}s, pm path -> $(pm path com.android.faceunlock 2>&1)" >>$LOG
 
 for i in 1 2 3 4 5; do
-    out=$(pm grant co.aospa.sense android.permission.CAMERA 2>&1)
+    out=$(pm grant com.android.faceunlock android.permission.CAMERA 2>&1)
     if [ -z "$out" ] || echo "$out" | grep -q "already granted"; then
         echo "ok grant CAMERA (attempt $i): ${out:-granted}" >>$LOG
         break

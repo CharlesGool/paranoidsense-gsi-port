@@ -56,3 +56,4 @@ Thumbs.db
 /third_party/
 *.keystore
 *.zip
+sense/*.keystore

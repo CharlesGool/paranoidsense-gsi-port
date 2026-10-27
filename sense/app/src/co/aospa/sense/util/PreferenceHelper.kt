@@ -1,4 +1,4 @@
-package com.android.faceunlock.util
+package co.aospa.sense.util
 
 import android.annotation.SuppressLint
 import android.content.Context

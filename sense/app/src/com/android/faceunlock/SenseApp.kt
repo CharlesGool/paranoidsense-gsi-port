@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.util.Log
 import com.android.faceunlock.activities.EnrollActivity
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Util
 
 class SenseApp : Application() {
 

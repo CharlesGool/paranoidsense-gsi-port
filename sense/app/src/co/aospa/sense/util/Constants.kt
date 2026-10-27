@@ -1,4 +1,4 @@
-package com.android.faceunlock.util
+package co.aospa.sense.util
 
 object Constants {
 

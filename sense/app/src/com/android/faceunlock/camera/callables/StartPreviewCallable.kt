@@ -5,7 +5,7 @@ import android.hardware.Camera
 import android.util.Log
 import android.view.SurfaceHolder
 import com.android.faceunlock.camera.listeners.CameraListener
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Util
 import java.io.IOException
 import java.lang.Exception
 import java.lang.RuntimeException

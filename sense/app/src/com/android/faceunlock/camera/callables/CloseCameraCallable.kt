@@ -2,7 +2,7 @@ package com.android.faceunlock.camera.callables
 
 import android.util.Log
 import com.android.faceunlock.camera.listeners.CameraListener
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Util
 import java.lang.Exception
 
 class CloseCameraCallable(listener: CameraListener?) : CameraCallable(listener) {

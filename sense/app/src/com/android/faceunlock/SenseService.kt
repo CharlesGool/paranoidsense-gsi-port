@@ -18,9 +18,9 @@ import android.content.pm.PackageManager
 import com.android.faceunlock.controller.FaceAuthenticationController
 import com.android.faceunlock.controller.FaceEnrollController
 import com.android.faceunlock.camera.CameraUtil
-import com.android.faceunlock.util.Constants
-import com.android.faceunlock.util.PreferenceHelper
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Constants
+import co.aospa.sense.util.PreferenceHelper
+import co.aospa.sense.util.Util
 import co.aospa.sense.vendor.Vendor
 import co.aospa.sense.vendor.VendorImpl
 

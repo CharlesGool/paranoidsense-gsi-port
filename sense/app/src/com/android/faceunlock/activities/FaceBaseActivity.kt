@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import com.android.faceunlock.R
-import com.android.faceunlock.util.Constants
+import co.aospa.sense.util.Constants
 
 abstract class FaceBaseActivity : Activity() {
 

@@ -17,7 +17,7 @@ import com.android.faceunlock.SenseApp.Companion.app
 import com.android.faceunlock.camera.CameraService
 import com.android.faceunlock.camera.CameraUtil
 import com.android.faceunlock.camera.listeners.*
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Util
 import java.lang.Exception
 import java.nio.ByteBuffer
 import java.util.ArrayList

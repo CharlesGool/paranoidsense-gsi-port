@@ -14,9 +14,9 @@ import android.widget.Toast
 import com.android.faceunlock.R
 import com.android.faceunlock.controller.FaceEnrollController
 import com.android.faceunlock.controller.FaceEnrollController.CameraCallback
-import com.android.faceunlock.util.Constants
-import com.android.faceunlock.util.PreferenceHelper
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Constants
+import co.aospa.sense.util.PreferenceHelper
+import co.aospa.sense.util.Util
 import com.android.faceunlock.view.CircleSurfaceView
 
 

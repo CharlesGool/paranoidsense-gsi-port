@@ -8,7 +8,7 @@ import android.util.Log
 import com.android.faceunlock.camera.CameraHandlerThread
 import com.android.faceunlock.camera.CameraHandlerThread.CameraData
 import com.android.faceunlock.camera.listeners.CameraListener
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Util
 import java.lang.ref.WeakReference
 
 

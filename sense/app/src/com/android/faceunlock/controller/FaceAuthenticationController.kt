@@ -13,8 +13,8 @@ import android.util.Log
 import com.android.faceunlock.camera.CameraService
 import com.android.faceunlock.camera.CameraUtil
 import com.android.faceunlock.camera.listeners.*
-import com.android.faceunlock.util.Constants.MSG_UNLOCK_FACE_NOT_FOUND
-import com.android.faceunlock.util.Util
+import co.aospa.sense.util.Constants.MSG_UNLOCK_FACE_NOT_FOUND
+import co.aospa.sense.util.Util
 import java.lang.Exception
 import java.nio.ByteBuffer
 

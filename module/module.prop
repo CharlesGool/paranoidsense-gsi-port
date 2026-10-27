@@ -1,0 +1,6 @@
+id=paranoidsense_gsi
+name=ParanoidSense Face Unlock for GSI
+version=v5
+versionCode=7
+author=CharlesGool
+description=GSI 人脸解锁(ParanoidSense + 旷视, WEAK). services.jar 必须用你自己底包编出来的. 开机前 system_server 重启 3 次会自动停用本模块.

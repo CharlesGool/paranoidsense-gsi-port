@@ -36,6 +36,7 @@ echo "==== aapt2"
 # 旷视模型(res/raw/model_file 等)直接用上游的
 for f in $(find "$HERE/app/res" "$UP/res/raw" -type f); do "$BT/aapt2" compile "$f" -o "$T/res/"; done
 "$BT/aapt2" link -o "$T/base.apk" --manifest "$HERE/app/AndroidManifest.xml" -I "$SYS/framework/framework-res.apk" \
+    --rename-manifest-package com.android.faceunlock --custom-package com.android.faceunlock \
     --java "$T/gen" --min-sdk-version 35 --target-sdk-version 35 "$T"/res/*.flat
 
 echo "==== javac(AIDL stub) + kotlinc"

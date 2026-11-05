@@ -70,7 +70,9 @@ EOF
 APKTOOL="$APKTOOL" python3 -I "$HERE/../scripts/check_dex.py" --boot "$CP" "$OUT/FaceUnlock.apk"
 
 echo "==== Settings overlay"
-for f in $(find "$HERE/overlay/res" -type f); do "$BT/aapt2" compile "$f" -o "$T/ores/"; done
+# 教育页的两个素材(face_education_lottie.json, face_settings.mp4)不进仓库, 用上游 overlay/res/raw/ 的
+for f in $(find "$HERE/overlay/res" -type f -not -path "*/res/raw/*") "$UP/overlay/res/raw/face_education_lottie.json" "$UP/overlay/res/raw/face_settings.mp4"; do
+    "$BT/aapt2" compile "$f" -o "$T/ores/"; done
 "$BT/aapt2" link -o "$T/overlay.apk" --manifest "$HERE/overlay/AndroidManifest.xml" \
     -I "$SYS/framework/framework-res.apk" --min-sdk-version 35 --target-sdk-version 35 "$T"/ores/*.flat
 "$BT/zipalign" -f -p 4 "$T/overlay.apk" "$T/overlay-aligned.apk"

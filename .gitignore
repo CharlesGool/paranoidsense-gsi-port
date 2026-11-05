@@ -57,3 +57,5 @@ Thumbs.db
 *.keystore
 *.zip
 sense/*.keystore
+# 设置教育页素材(Google Pixel 设置资源), 构建时从上游 overlay/res/raw/ 取
+sense/overlay/res/raw/

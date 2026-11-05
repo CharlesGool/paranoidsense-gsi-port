@@ -30,8 +30,9 @@ metadata:
 
 | 组件名称 | 版本或哈希 | 上游地址 | 许可证类型 | 使用方式 | 版权归属 | 发布合规义务 | 核验日期 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| ParanoidSense | `a500478bbb0e2933276d57796d9b410f0f8e90f8`(`fifteen` 分支) | https://github.com/PixelOS-AOSP/packages_apps_ParanoidSense | Apache-2.0 | `sense/` 由其修改而来; 构建时拉取其 `lib/` 和 `res/raw/` 编进 APK | Paranoid Android / PixelOS | 保留版权声明, 附许可证, 标明修改 | 2026-10-27 |
+| ParanoidSense | `a500478bbb0e2933276d57796d9b410f0f8e90f8`(`fifteen` 分支) | https://github.com/PixelOS-AOSP/packages_apps_ParanoidSense | Apache-2.0 | `sense/` 由其修改而来; 构建时拉取其 `lib/`, `res/raw/` 和 `overlay/res/raw/` 编进 APK | Paranoid Android / PixelOS | 保留版权声明, 附许可证, 标明修改 | 2026-10-27 |
 | 旷视人脸 SDK(`libmegface.so` 等 4 个 so, `vendorImplPrebuilt.jar`, `model_file`) | 同上 | 同上(`lib/`, `res/raw/`) | 未知(上游未单独声明) | 不在本仓库; 构建时拉取, 编进本地构建的 APK | Megvii | 未确定 | 2026-10-27 |
+| 设置教育页素材(`face_education_lottie.json`, `face_settings.mp4`) | 同上, SHA-256 `7788f9ec...`, `f93fe186...` | 同上(`overlay/res/raw/`) | 专有(Google Pixel 设置资源, 上游未单独声明) | 不在本仓库; 构建时拉取, 编进本地构建的 `FaceUnlockSettingsOverlay.apk`. 2026-11-05 前曾入库, 旧提交中仍有 | Google | 未确定; **禁止**进仓库 | 2026-11-05 |
 | KLC_OS `0009-feat-Add-Face-Unlock-with-ParanoidSense` 补丁 | 补丁内 commit `f78e9bc3` | https://github.com/LoggingNewMemory/KLC_OS | 仓库未声明; 补丁中的源文件头为 Apache-2.0 | `services/src/` 中 15 个类据其适配 | The Android Open Source Project, Paranoid Android | 保留源文件头的版权声明 | 2026-10-27 |
 | AOSP frameworks/base | Android 15 | https://android.googlesource.com/platform/frameworks/base | Apache-2.0 | `services/src/` 的类派生自 AOSP 人脸代码 | The Android Open Source Project | 保留版权声明 | 2026-10-27 |
 
@@ -45,4 +46,4 @@ Apache License 2.0 全文: [LICENSE](../LICENSE)(取自 ParanoidSense 上游).
 
 ### 合规审查
 
-暂无 Copyleft 组件. 旷视 SDK 的再分发条款无法确定; 本仓库只提供拉取脚本, 用户自行构建的 APK 包含这些文件.
+暂无 Copyleft 组件. 旷视 SDK 和设置教育页素材的再分发条款无法确定; 本仓库只提供拉取脚本, 用户自行构建的 APK 和模块包含这些文件, 分发前**必须**自行确认授权.

@@ -27,10 +27,12 @@ metadata:
 ## 设计目标
 
 - [x] 不需要 platform 签名, 不重新编 ROM
-- [x] 只对装在 system 分区的 `co.aospa.sense` 放宽权限, 其他调用方的检查不变
+- [x] 只对装在 system 分区的 `com.android.faceunlock` 放宽权限, 其他调用方的检查不变
 - [x] 不常驻前台通知
-- [x] 仓库不包含旷视的二进制文件
-- [ ] 在 TB321FU 以外的底包上验证
+- [x] 仓库不包含旷视的二进制文件和设置教育页素材
+- [x] 提供移植到其他底包的教程: [porting-guide](porting-guide.md)
+- [ ] 在 TB321FU 以外的设备上验证
+- [ ] `services/build.sh` 支持 Android 17 的压缩 ART apex (`.capex`)
 
 ## 架构
 
@@ -39,12 +41,13 @@ metadata:
 | 目录 | 职责 |
 | --- | --- |
 | `services/` | `src/`: Sense 框架源码; `apply_hooks.py`: smali 补丁; `build.sh`: 从底包生成新的 `services.jar` |
-| `sense/` | `app/`: 改过的 ParanoidSense 应用; `overlay/`: 设置 overlay; `build.sh`: 编译并签名两个 APK |
+| `sense/` | `app/`: 改过的 ParanoidSense 应用 (`com.android.faceunlock`); `overlay/`: 设置 overlay, 教育页素材构建时从上游取; `build.sh`: 编译并签名 `FaceUnlock.apk` 和 `FaceUnlockSettingsOverlay.apk` |
 | `module/` | KernelSU / Magisk 模块的脚本, 属性和权限 xml |
 | `image/` | 只在做进 system 镜像时用的文件 |
 | `scripts/` | `fetch_upstream.sh` 拉上游, `check_dex.py` 检查 dex, `pack_module.sh` 打模块 |
 | `third_party/` | `fetch_upstream.sh` 拉下来的上游 ParanoidSense, 不提交 |
 | `out/` | 构建输出, 不提交 |
+| `doc/` | 项目文档和[移植教程](porting-guide.md) |
 
 ### 1. services.jar: 加入 Sense 框架
 
@@ -73,7 +76,7 @@ Pixel 底包的 `services.jar` 经过 R8 优化, 和 AOSP 源码有出入, 适�
 
 1. 调用方是 system, root 或 system_server 自己
 2. 调用方持有 `USE_BIOMETRIC_INTERNAL` 或 `MANAGE_BIOMETRIC`(原有行为)
-3. 调用方 uid 下有 `co.aospa.sense`, 且它带 `FLAG_SYSTEM` 并且 `isPrivilegedApp()`. 查询包信息时用 `Binder.clearCallingIdentity()` 包住
+3. 调用方 uid 下有 `com.android.faceunlock`, 且它带 `FLAG_SYSTEM` 并且 `isPrivilegedApp()`. 查询包信息时用 `Binder.clearCallingIdentity()` 包住
 
 条件 3 要求应用装在 `/system/priv-app/`, 用户自行安装的同名应用不满足.
 
@@ -81,7 +84,7 @@ Pixel 底包的 `services.jar` 经过 R8 优化, 和 AOSP 源码有出入, 适�
 
 ### 3. 相机: 前台绑定
 
-`co.aospa.sense` 的 CAMERA 权限在 appops 层面是 foreground-only. system_server 只用 `BIND_AUTO_CREATE` 绑定 SenseService 时, 过了启动后的缓冲期进程就被算作后台, CameraService 报 `has been restricted` 拒绝打开相机, 表现是头几次能解锁, 之后不行.
+`com.android.faceunlock` 的 CAMERA 权限在 appops 层面是 foreground-only. system_server 只用 `BIND_AUTO_CREATE` 绑定 SenseService 时, 过了启动后的缓冲期进程就被算作后台, CameraService 报 `has been restricted` 拒绝打开相机, 表现是头几次能解锁, 之后不行.
 
 `SenseProvider` 改为用 `BIND_AUTO_CREATE | BIND_FOREGROUND_SERVICE | BIND_INCLUDE_CAPABILITIES` 绑定: 前者把被绑定的进程提到前台级, 后者把 system_server 的相机能力传给它. 应用不调用 `startForeground`, 所以没有常驻通知.
 
@@ -90,7 +93,8 @@ Pixel 底包的 `services.jar` 经过 R8 优化, 和 AOSP 源码有出入, 适�
 - 去掉 `sharedUserId="android.uid.system"` 和 setupdesign / setupcompat 依赖, 录入界面改用标准组件
 - 应用进程的 classpath 里没有 kotlin-stdlib 和 `services.jar`, Kotlin 标准库, AIDL stub 和 `vendorImplPrebuilt.jar` 都编进 APK 的 dex
 - `/system/priv-app` 下的应用不解压 so: 4 个旷视 so 不压缩并页对齐放进 APK, `extractNativeLibs="false"`, 直接从 APK 加载
-- 设置里的人脸解锁入口和动画由 `SenseSettingsOverlay`(目标 `com.android.settings`)提供
+- 设置里的人脸解锁入口和动画由 `FaceUnlockSettingsOverlay`(目标 `com.android.settings`)提供
+- 包名用 `com.android.faceunlock`, 避开把 `co.aospa.sense` 当作第三方 ROM 特征的检测. manifest 里仍写 `co.aospa.sense`, aapt2 link 时用 `--rename-manifest-package` 改名; `co.aospa.sense.util` 下的两个类保留原包名
 
 ### 5. 构建检查
 
@@ -99,12 +103,32 @@ d8 **禁止**加 `--no-desugaring`: javac 17 把 private 方法的方法引用(�
 ### 6. 模块
 
 `module/post-fs-data.sh` 单独 bind mount `services.jar`; 需要新增文件的目录(`priv-app`, `etc/permissions`, `etc/sysconfig`, `product/overlay`)先复制到 tmpfs, 再用 overlayfs 叠到 system 上(overlayfs 不接受 `/data` 上的 f2fs 做 lowerdir). 不依赖 meta-overlayfs.
-`module/service.sh` 在开机完成前发现 system_server 启动了 3 次时停用模块并重启; 开机后等 pm 可用, 再给 `co.aospa.sense` 授予 CAMERA(模块方式下 default-permissions 目录不一定存在).
+`module/service.sh` 在开机完成前发现 system_server 启动了 3 次时停用模块并重启; 开机后等 pm 可用, 再给 `com.android.faceunlock` 授予 CAMERA(模块方式下 default-permissions 目录不一定存在).
 
 ## 设计约束
 
 - `services.jar` 只能从要刷的那个底包生成, 不同底包之间**禁止**混用
-- `services/src/` 是按 Pixel Tablet AP3A.241005.015 的 `services.jar` 适配的. 换底包时 javac 报错要按底包的字节码修改; 编译通过也不代表正确: R8 可能把某些基类方法的调用内联掉, 新子类的覆盖在那些地方不生效, 只能上机看日志
-- 权限放行**禁止**扩大到 `co.aospa.sense` 系统 priv-app 以外的调用方
-- 仓库**禁止**包含旷视的 so, jar 和模型文件, 以及签名密钥
+- `services/src/` 是按 Pixel Tablet AP3A.241005.015 的 `services.jar` 适配的. 换底包时 javac 报错要按底包的字节码修改, 步骤见 [porting-guide](porting-guide.md); 编译通过也不代表正确: R8 可能把某些基类方法的调用内联掉, 新子类的覆盖在那些地方不生效, 只能上机看日志
+- 权限放行**禁止**扩大到 `com.android.faceunlock` 系统 priv-app 以外的调用方
+- 仓库**禁止**包含旷视的 so, jar 和模型文件, 设置教育页素材, 编出的 APK, 以及签名密钥
 - 要求 Android 15 (min-api 35), arm64
+
+## 数据设计
+
+设备上的运行数据, 不在仓库中:
+
+| 位置 | 内容 |
+| --- | --- |
+| `com.android.faceunlock` 的应用数据 | 人脸模板和录入状态. 清除应用数据会删除人脸 |
+| `/data/adb/modules/faceunlock_gsi/mount.log` | 模块方式的挂载和开机保护日志; 自动停用时 crash 日志也存在模块目录 |
+| `ro.face.sense_service=true` | system_server 据此注册 `SenseProvider` |
+| `ro.face.sense_service.camera_id` | 可选, 指定识别用的相机 |
+
+## 外部接口
+
+| 接口 | 提供方 | 用途 |
+| --- | --- | --- |
+| 底包的 `framework.jar`, `services.jar`, `framework-res.apk`, ART apex | 目标 GSI | 编译 classpath, smali 补丁的输入, 资源链接 |
+| 旷视库, 模型和设置教育页素材 | [PixelOS ParanoidSense](https://github.com/PixelOS-AOSP/packages_apps_ParanoidSense) 固定 commit | 编两个 APK |
+| `vendor.aospa.biometrics.face.ISenseService` | 本项目 (AIDL) | system_server 和应用之间的识别接口 |
+| KernelSU / Magisk 模块格式 (`post-fs-data.sh`, `service.sh`, `system.prop`) | KernelSU, Magisk | 模块方式安装 |

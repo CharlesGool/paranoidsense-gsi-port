@@ -35,3 +35,8 @@ KSU 模块阶段的调试过程(在 TB321FU 上, 2026-10-27):
 | v3 | 录入页仍崩溃 | `MANAGE_BIOMETRIC` 也是 signature 级, 不能作为放行条件; 改为按身份放行 |
 | v4 | 能录入, 头几次能解锁, 之后相机被拒 | CAMERA foreground-only; 改绑定参数 |
 | v5 | 全部通过 | |
+
+之后的演变:
+
+- 2026-10-27: 从 TB321FU_PixelOS_15_Tangorpro 的 `faceunlock/clean/` 拆出本仓库.
+- 2026-11-05: 包名改为 `com.android.faceunlock` (v2). TB321FU 上的镜像补丁拆到 [tb321fu-faceunlock-patch](https://github.com/CharlesGool/tb321fu-faceunlock-patch), 并在那里适配了 BP1A 和 CP3A 底包; 本仓库改为通用移植教程和工具.
